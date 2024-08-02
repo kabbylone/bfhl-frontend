@@ -18,7 +18,7 @@ function App() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://bfhl-backend-rf99untqd-kabbiers-projects.vercel.app/",
+        "https://your-backend-url.vercel.app/bfhl",
         JSON.parse(jsonInput)
       );
       setResponse(response.data);
@@ -61,16 +61,11 @@ function App() {
           cols={50}
         />
         <br />
+        <Select isMulti options={options} onChange={handleOptionChange} />
+        <br />
         <button type="submit">Submit</button>
       </form>
       {error && <div style={{ color: "red" }}>{error}</div>}
-
-      {response && (
-        <>
-          <h2>Multi Filter</h2>
-          <Select isMulti options={options} onChange={handleOptionChange} />
-        </>
-      )}
 
       <div>
         <h2>Filtered Response</h2>
