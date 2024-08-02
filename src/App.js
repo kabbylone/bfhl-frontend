@@ -1,46 +1,50 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Select from "react-select";
 
 function App() {
   const [jsonInput, setJsonInput] = useState("");
   const [response, setResponse] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [error, setError] = useState(null);
+
+  const options = [
+    { value: "numbers", label: "Numbers" },
+    { value: "alphabets", label: "Alphabets" },
+    { value: "highest_alphabet", label: "Highest Alphabet" },
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://your-backend-url.vercel.app/bfhl",
+        "https://bfhl-backend-rf99untqd-kabbiers-projects.vercel.app/",
         JSON.parse(jsonInput)
       );
       setResponse(response.data);
+      setError(null);
     } catch (error) {
-      alert("Invalid JSON or server error");
+      setError("Invalid JSON or server error");
     }
   };
 
-  const handleOptionChange = (e) => {
-    const { value, checked } = e.target;
-    setSelectedOptions((prev) =>
-      checked ? [...prev, value] : prev.filter((opt) => opt !== value)
-    );
+  const handleOptionChange = (selected) => {
+    setSelectedOptions(selected);
   };
 
   const renderResponse = () => {
     if (!response) return null;
     return (
       <div>
-        {selectedOptions.includes("numbers") && (
-          <div>Numbers: {JSON.stringify(response.numbers)}</div>
+        {selectedOptions.some((option) => option.value === "numbers") && (
+          <div>Numbers: {response.numbers.join(",")}</div>
         )}
-        {selectedOptions.includes("alphabets") && (
-          <div>Alphabets: {JSON.stringify(response.alphabets)}</div>
+        {selectedOptions.some((option) => option.value === "alphabets") && (
+          <div>Alphabets: {response.alphabets.join(",")}</div>
         )}
-        {selectedOptions.includes("highest_alphabet") && (
-          <div>
-            Highest Alphabet: {JSON.stringify(response.highest_alphabet)}
-          </div>
-        )}
+        {selectedOptions.some(
+          (option) => option.value === "highest_alphabet"
+        ) && <div>Highest Alphabet: {response.highest_alphabet.join(",")}</div>}
       </div>
     );
   };
@@ -59,39 +63,17 @@ function App() {
         <br />
         <button type="submit">Submit</button>
       </form>
+      {error && <div style={{ color: "red" }}>{error}</div>}
 
       {response && (
         <>
-          <h2>Options</h2>
-          <label>
-            <input
-              type="checkbox"
-              value="numbers"
-              onChange={handleOptionChange}
-            />{" "}
-            Numbers
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              value="alphabets"
-              onChange={handleOptionChange}
-            />{" "}
-            Alphabets
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              value="highest_alphabet"
-              onChange={handleOptionChange}
-            />{" "}
-            Highest Alphabet
-          </label>
+          <h2>Multi Filter</h2>
+          <Select isMulti options={options} onChange={handleOptionChange} />
         </>
       )}
 
       <div>
-        <h2>Response</h2>
+        <h2>Filtered Response</h2>
         {renderResponse()}
       </div>
     </div>
