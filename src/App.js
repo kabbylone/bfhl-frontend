@@ -18,7 +18,7 @@ function App() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://your-backend-url.vercel.app/bfhl",
+        "https://bfhl-backend-flame.vercel.app/",
         JSON.parse(jsonInput)
       );
       setResponse(response.data);
